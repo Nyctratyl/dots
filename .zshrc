@@ -51,7 +51,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
-ENABLE_CORRECTION="true"
+# ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 # Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
@@ -121,7 +121,9 @@ source $ZSH/oh-my-zsh.sh
 #
 #
 #
-export FZF_DEFAULT_COMMAND="find -L"
+compinit
+_comp_options+=(globdots)
+#
 # disable sort when completing `git checkout`
 zstyle ':completion:*:git-checkout:*' sort false
 # # set descriptions format to enable group support
@@ -129,11 +131,11 @@ zstyle ':completion:*:descriptions' format '[%d]'
 # # set list-colors to enable filename colorizing
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # # preview directory's content with exa when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'tree -C $realpath | head -n 200'
 # # switch group using `,` and `.`
 zstyle ':fzf-tab:*' switch-group ',' '.'
 zstyle ':fzf-tab:*:' prefix ''
-
+export FZF_DEFAULT_COMMAND="find -L"
 
 # Aliases
 alias thesis="cd ~/Documents/jobb/Provement/thesis"
@@ -143,6 +145,7 @@ alias vimrc="vim ~/.vimrc"
 alias plugins.vim="vim ~/.vim/plugins.vim"
 alias zshrc="vim ~/.zshrc"
 alias torrents="cd ~/Downloads/torrents"
+alias dots="cd ~/Applications/dots"
 
 path+=~/go/bin
 # Flow control off, or else, ctrl-s freezes in some cases
