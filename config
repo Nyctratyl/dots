@@ -14,11 +14,11 @@ set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term alacritty
+set $term /home/jacob/.local/bin/kitty
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu dmenu_path | rofi -show drun | xargs swaymsg exec --
+set $menu /usr/bin/wofi --show drun
 
 font pango:DejaVu Sans Mono, Terminus Bold Semi-Condensed 8
 
@@ -30,7 +30,9 @@ output * bg #000000 solid_color
 #
 # Example configuration:
 #
-#   output HDMI-A-1 resolution 1920x1080 position 1920,0
+   output eDP-1 resolution 2880x1800 position 0,0 scale 1.4
+   output DP-1 resolution 1920x1200 position 3979,0
+   output HDMI-A-1 resolution 1920x1200 position 2059,0
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 
@@ -210,6 +212,7 @@ bindsym $mod+r mode "resize"
 bindsym $mod+Shift+period move workspace to output left
 bindsym $mod+Shift+comma move window to output right
 bindsym $mod+comma focus output right
+bindsym $mod+p exec swaylock
 exec xmodmap -e "keycode 90 = Right" # Remap since Right key is dying
 
 # Tabbing
@@ -234,15 +237,14 @@ bindsym XF86AudioMute exec amixer -D pulse set Master 1+ toggle && exec curl "lo
 
 # Hotkeys to utilities
 bindsym $mod+n exec fish -c choose_wifi
-bindsym $mod+p exec fish -c choose_emoji
 bindsym Print exec fish -c "gnome-screenshot -a"
 bindsym $mod+o exec i3-input -F 'title_format "[%s] %title' -P 'New title for container: '
 
 gaps outer 0
-gaps inner 10
+gaps inner 0
 
 # Colors
-client.focused          #333333 #303030 #FFFFFF #000000   #666666
+client.focused          #000000 #563c27 #FFFFFF #563c27   #563c27
 client.focused_inactive #303030 #000000 #FFFFFF #484E50   #303030
 client.unfocused        #333333 #222222 #888888 #292D2E   #222222
 client.urgent           #2F343A #900000 #FFFFFF #900000   #900000
@@ -250,7 +252,7 @@ client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
 
 client.background       #FFFFFF
 
-default_border none
+default_border pixel 2
 
 #
 # Status Bar:
@@ -262,7 +264,9 @@ bar {
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
     # status_command while date +'%Y-%m-%d %l:%M:%S %p'; do sleep 1; done
-    status_command ~/kod/bar_bar/barbar
+    # status_command ~/kod/bar_bar/barbar
+    # status_command while date +'%Y-%m-%d %l:%M:%S %p'; do sleep 1; done
+    status_command i3status
 
     colors {
         statusline #ffffff
@@ -274,7 +278,7 @@ bar {
       background #303030
       statusline #839496
       separator  #586e75
-      focused_workspace  #b58900 #b58900 #002b36
+      focused_workspace  #563c27 #563c27 #ffffff
       active_workspace   #586e75 #586e75 #002b36
       inactive_workspace #303030 #303030 #839496
       urgent_workspace   #dc322f #dc322f #fdf6e3
