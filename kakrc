@@ -3,10 +3,13 @@ lsp-enable
 lsp-auto-hover-enable
 lsp-auto-signature-help-enable
 lsp-auto-hover-insert-mode-disable
-git diff show-diff
 
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "andreyorst/plug.kak" noload
+plug "andreyorst/smarttab.kak"
+
+set-option global tabstop 2
+set-option global indentwidth 2
 
 plug "andreyorst/kaktree" config %{
     hook global WinSetOption filetype=kaktree %{
@@ -29,12 +32,9 @@ hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap wi
 
 map global normal <c-n> :new<ret>
 map global normal <c-p> :kaktree-toggle<ret>
-
-map global normal <c-h> 5h
-map global normal <c-j> 5j
-# map global normal <ret> 5j # this is pretty fucked up, but apparently these are equivalent when ran inside tmux
-map global normal <c-k> 5k
-map global normal <c-l> 5l
+map global normal <c-t> :tmux-repl-vertical<ret>
 
 map global normal <c-d> 5j
 map global normal <c-u> 5k
+
+hook global WinCreate .* %{ git show-diff; smarttab}

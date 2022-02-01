@@ -1,0 +1,58 @@
+ output eDP-1 resolution 2880x1800 position 0,0 scale 1.4
+ output DP-1 resolution 1920x1200 position 3979,0
+ output HDMI-A-1 resolution 1920x1200 position 2059,0
+
+#
+# Status Bar:
+#
+# Read `man 5 sway-bar` for more information about this section.
+bar {
+    position top
+
+    # When the status_command prints a new line to stdout, swaybar updates.
+    # The default just shows the current date and time.
+    # status_command while date +'%Y-%m-%d %l:%M:%S %p'; do sleep 1; done
+    # status_command ~/kod/bar_bar/barbar
+    # status_command while date +'%Y-%m-%d %l:%M:%S %p'; do sleep 1; done
+    status_command /home/jacob/repos/barbar/barbar
+
+		output HDMI-A-1
+		output eDP-1
+    colors {
+        statusline #ffffff
+        background #323232
+        inactive_workspace #32323200 #32323200 #5c5c5c
+    }
+
+    colors {
+      background #303030
+      statusline #839496
+      separator  #586e75
+      focused_workspace  #563c27 #563c27 #ffffff
+      active_workspace   #586e75 #586e75 #002b36
+      inactive_workspace #303030 #303030 #839496
+      urgent_workspace   #dc322f #dc322f #fdf6e3
+    }
+}
+
+bar {
+	position top
+	output DP-1
+  status_command while date +'%H:%M:%S (%d-%m-%Y)'; do sleep 1; done
+
+  colors {
+      statusline #ffffff
+      background #323232
+      inactive_workspace #32323200 #32323200 #5c5c5c
+  }
+
+  colors {
+    background #303030
+    statusline #839496
+    separator  #586e75
+    focused_workspace  #563c27 #563c27 #ffffff
+    active_workspace   #586e75 #586e75 #002b36
+    inactive_workspace #303030 #303030 #839496
+    urgent_workspace   #dc322f #dc322f #fdf6e3
+  }
+}
