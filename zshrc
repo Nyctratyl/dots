@@ -1,23 +1,14 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-stty -ixon
-
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/gasha/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -32,14 +23,13 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Case-sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
+# Uncomment one of the following lines to change the auto-update behavior
+# zstyle ':omz:update' mode disabled  # disable automatic updates
+# zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+# zstyle ':omz:update' frequency 13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
 # DISABLE_MAGIC_FUNCTIONS="true"
@@ -54,8 +44,9 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
-# Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
-# See https://github.com/ohmyzsh/ohmyzsh/issues/5765
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
 # COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
@@ -79,7 +70,10 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git vi-mode fzf-tab)
+plugins=(git ssh-agent zsh-syntax-highlighting)
+
+zstyle :omz:plugins:ssh-agent identities work_openssh
+zstyle :omz:plugins:ssh-agent lifetime 4h
 
 source $ZSH/oh-my-zsh.sh
 
@@ -91,11 +85,11 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='kak'
+else
+  export EDITOR='kak'
+fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -108,52 +102,19 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# source ~/Applications/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-# export KEYTIMEOUT=1
-# zstyle ':autocomplete:*' min-input 2;
-# zstyle ':autocomplete:tab:*' insert-unambiguous yes
-# zstyle ':autocomplete:tab:*' widget-style menu-select
-# zstyle ':completion:*' extra-verbose yes
 #
 #
 #
-compinit
-_comp_options+=(globdots)
-#
-# disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
-# # set descriptions format to enable group support
-zstyle ':completion:*:descriptions' format '[%d]'
-# # set list-colors to enable filename colorizing
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-# # preview directory's content with exa when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'tree -C $realpath | head -n 200'
-# # switch group using `,` and `.`
-zstyle ':fzf-tab:*' switch-group ',' '.'
-zstyle ':fzf-tab:*:' prefix ''
-export FZF_DEFAULT_COMMAND="find -L"
+path+=('/home/jacob/.local/bin')
+path+=('/home/jacob/go/bin')
+path+=('/usr/local/go/bin')
+path+=('/home/jacob/Applications/node-v16.13.1-linux-x64/bin/') # tmp solution
+alias garden="cd ~/repos/products/garden-v2/"
+alias mfn="cd ~/repos/products/mfn/"
+alias spider-cave="cd ~/repos/products/spider-cave/"
+alias k=kubectl
 
-# Aliases
-alias thesis="cd ~/Documents/jobb/Provement/thesis"
-alias i3config="vim ~/.config/i3/config"
-alias config="cd ~/.config/"
-alias vimrc="vim ~/.vimrc"
-alias plugins.vim="vim ~/.vim/plugins.vim"
-alias zshrc="vim ~/.zshrc"
-alias torrents="cd ~/Downloads/torrents"
-alias dots="cd ~/Applications/dots"
+# export _JAVA_AWT_WM_NONREPARENTING=1
+export PATH
 
-path+=~/go/bin
-# Flow control off, or else, ctrl-s freezes in some cases
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/gasha/work/google-cloud-sdk/path.zsh.inc' ]; then . '/home/gasha/work/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/gasha/work/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/gasha/work/google-cloud-sdk/completion.zsh.inc'; fi
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source <(kubectl completion zsh)
