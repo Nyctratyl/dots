@@ -228,8 +228,8 @@ bindsym $mod+Shift+Return split v, exec $term --working-directory $(lastcwd)
 
 # Audio control
 bindsym XF86AudioPlay exec fish -c "~/scripts/playerctl_fast.sh play-pause" 
-bindsym XF86AudioRaiseVolume exec amixer -D pulse sset Master 5%+ && exec curl "localhost:5999/forceUpdate?d=volume"
-bindsym XF86AudioLowerVolume exec amixer -D pulse sset Master 5%- && exec curl "localhost:5999/forceUpdate?d=volume"
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pactl list sinks | tr '\n' ' ' | grep 'Sink #[0-9]\s*State\: RUNNING' -o | grep '[0-9]*' -o) +2% && exec curl "localhost:5999/forceUpdate?d=volume"
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pactl list sinks | tr '\n' ' ' | grep 'Sink #[0-9]\s*State\: RUNNING' -o | grep '[0-9]*' -o) -2% && exec curl "localhost:5999/forceUpdate?d=volume"
 bindsym XF86AudioMute exec amixer -D pulse set Master 1+ toggle && exec curl "localhost:5999/forceUpdate?d=volume"
 bindsym XF86MonBrightnessUp exec ~/repos/utility/blight/blight.py set +10% && exec curl "localhost:5999/forceUpdate?d=brightness" 
 bindsym XF86MonBrightnessDown exec ~/repos/utility/blight/blight.py set -10% && exec curl "localhost:5999/forceUpdate?d=brightness" 
@@ -237,6 +237,8 @@ bindsym XF86MonBrightnessDown exec ~/repos/utility/blight/blight.py set -10% && 
 bindsym $mod+n exec fish -c choose_wifi
 bindsym Print exec fish -c "gnome-screenshot -a"
 bindsym $mod+o exec i3-input -F 'title_format "[%s] %title' -P 'New title for container: '
+
+bindsym $mod+t exec ~/swayprop.sh
 
 gaps outer 0
 gaps inner 0
@@ -258,7 +260,7 @@ input type:keyboard {
     repeat_rate 100
 }
 
-# include ./work
-include ./home
+include ./work
+# include ./home
 
 
