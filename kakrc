@@ -32,6 +32,7 @@ hook global InsertCompletionShow .* %{ map window insert <tab> <c-n>; map window
 hook global InsertCompletionHide .* %{ unmap window insert <tab> <c-n>; unmap window insert <s-tab> <c-p> }
 
 map global normal <c-n> :new<ret>
+map global normal <s-n> :new-horizontal<ret>
 map global normal <c-p> :kaktree-toggle<ret>
 
 hook global WinCreate .* %{ git show-diff; smarttab}
@@ -57,3 +58,54 @@ hook global BufSetOption filetype=go %{
   set-option buffer formatcmd 'gofmt'
   hook buffer BufWritePre .* %{format}
 }
+
+hook global BufCreate .*/garden-v2/.* %{
+	hook global BufSetOption filetype=(javascript|typescript) %{
+	  set-option buffer formatcmd "prettier --stdin-filepath=%val{buffile}"
+	  hook buffer BufWritePre .* %{format}
+	}
+}
+
+define-command -docstring "psql-enable" \
+psql-enable %{
+  declare-option -docstring "Postgres database" str postgres_database
+  declare-option -docstring "Postgres user" str postgres_user
+  declare-option -docstring "Postgres host" str postgres_host
+  declare-option -docstring "Postgres port" int postgres_port
+  declare-option -hidden str psql_tmpfile
+  set-option window postgres_database "vetpro"
+  set-option window postgres_user "postgres"
+  set-option window postgres_host "localhost"
+  set-option window postgres_port 5432
+  set-option window psql_tmpfile %sh{ mktemp /tmp/kakoune_psql.XXXX }
+
+  define-command -docstring "query-selection" \
+  query-selection %{
+    execute-keys -itersel -draft "<a-|>psql -A -d %opt{postgres_database} -U %opt{postgres_user} -h %opt{postgres_host} -p %opt{postgres_port} >> %opt{psql_tmpfile} 2>&1<ret>"
+  }
+
+  define-command -docstring "query-buffer" \
+  query-buffer %{
+    execute-keys -draft "%%: query-selection<ret>"
+  }
+
+  # tmux-terminal-horizontal kak -s "%val{session}-psql" -e "edit %opt{psql_tmpfile}; set-option window autoreload yes; nop %sh{ tmux select-pane -t .! }"
+  repl-new kak -s "%val{session}-psql" -e "edit %opt{psql_tmpfile}; set-option window autoreload yes"
+
+  hook window WinClose .* %{ psql-disable }
+}
+define-command -docstring "psql-disable" \
+psql-disable %{
+  unset-option window postgres_database
+  unset-option window postgres_user
+  unset-option window postgres_host
+  unset-option window postgres_port
+  unset-option window psql_tmpfile
+  nop %sh{
+    kak -c "${kak_session}-psql" -e "kill!"
+    rm -f "/tmp/$kak_opt_psql_tmpfile"
+    echo "$kak_opt_psql_tmpfile" > /tmp/foo
+    rm -f "/tmp/"
+  }
+}
+
