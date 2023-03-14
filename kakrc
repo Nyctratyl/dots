@@ -35,6 +35,9 @@ map global normal <c-n> :new<ret>
 map global normal <s-n> :new-horizontal<ret>
 map global normal <c-p> :kaktree-toggle<ret>
 
+map global normal <c-left> :bp<ret>
+map global normal <c-right> :bn<ret>
+
 hook global WinCreate .* %{ git show-diff; smarttab}
 
 hook global RegisterModified '"' %{ nop %sh{
@@ -54,58 +57,113 @@ plug "gustavo-hms/luar" %{
     }
 }
 
+hook global WinSetOption filetype=yaml expandtab
+hook global WinSetOption filetype=haskell expandtab
+hook global WinSetOption filetype=elm expandtab
+
 hook global BufSetOption filetype=go %{
   set-option buffer formatcmd 'gofmt'
   hook buffer BufWritePre .* %{format}
 }
 
-hook global BufCreate .*/garden-v2/.* %{
-	hook global BufSetOption filetype=(javascript|typescript) %{
-	  set-option buffer formatcmd "prettier --stdin-filepath=%val{buffile}"
-	  hook buffer BufWritePre .* %{format}
-	}
+hook global WinSetOption filetype=elm %{
+  set window formatcmd 'elm-format --stdin'
+ 
+  hook buffer BufWritePre .* %{format}
 }
 
-define-command -docstring "psql-enable" \
-psql-enable %{
-  declare-option -docstring "Postgres database" str postgres_database
-  declare-option -docstring "Postgres user" str postgres_user
-  declare-option -docstring "Postgres host" str postgres_host
-  declare-option -docstring "Postgres port" int postgres_port
-  declare-option -hidden str psql_tmpfile
-  set-option window postgres_database "vetpro"
-  set-option window postgres_user "postgres"
-  set-option window postgres_host "localhost"
-  set-option window postgres_port 5432
-  set-option window psql_tmpfile %sh{ mktemp /tmp/kakoune_psql.XXXX }
 
-  define-command -docstring "query-selection" \
-  query-selection %{
-    execute-keys -itersel -draft "<a-|>psql -A -d %opt{postgres_database} -U %opt{postgres_user} -h %opt{postgres_host} -p %opt{postgres_port} >> %opt{psql_tmpfile} 2>&1<ret>"
-  }
-
-  define-command -docstring "query-buffer" \
-  query-buffer %{
-    execute-keys -draft "%%: query-selection<ret>"
-  }
-
-  # tmux-terminal-horizontal kak -s "%val{session}-psql" -e "edit %opt{psql_tmpfile}; set-option window autoreload yes; nop %sh{ tmux select-pane -t .! }"
-  repl-new kak -s "%val{session}-psql" -e "edit %opt{psql_tmpfile}; set-option window autoreload yes"
-
-  hook window WinClose .* %{ psql-disable }
+# hook global BufCreate .*/garden-v2/.* %{
+# 	hook global BufSetOption filetype=(javascript|typescript) %{
+# 	  set-option buffer formatcmd "prettier --stdin-filepath=%val{buffile}"
+# 	  hook buffer BufWritePre .* %{format}
+# 	}
+# }
+# hook global BufCreate .*/dockertest/frontend-v2/.* %{
+# 	hook global BufSetOption filetype=(javascript|typescript) %{
+# 	  set-option buffer formatcmd "prettier --stdin-filepath=%val{buffile}"
+# 	}
+# }
+hook global BufSetOption filetype=(javascript|typescript) %{
+  set-option buffer formatcmd "prettier --stdin-filepath=%val{buffile}"
+  hook buffer BufWritePre .* %{format}
 }
-define-command -docstring "psql-disable" \
-psql-disable %{
-  unset-option window postgres_database
-  unset-option window postgres_user
-  unset-option window postgres_host
-  unset-option window postgres_port
-  unset-option window psql_tmpfile
-  nop %sh{
-    kak -c "${kak_session}-psql" -e "kill!"
-    rm -f "/tmp/$kak_opt_psql_tmpfile"
-    echo "$kak_opt_psql_tmpfile" > /tmp/foo
-    rm -f "/tmp/"
-  }
+
+#define-command -docstring "psql-enable" \
+#psql-enable %{
+  #declare-option -docstring "Postgres database" str postgres_database
+  #declare-option -docstring "Postgres user" str postgres_user
+  #declare-option -docstring "Postgres host" str postgres_host
+  #declare-option -docstring "Postgres port" int postgres_port
+  #declare-option -hidden str psql_tmpfile
+  #set-option window postgres_database "vetpro"
+  #set-option window postgres_user "postgres"
+  #set-option window postgres_host "localhost"
+  #set-option window postgres_port 5432
+  #set-option window psql_tmpfile %sh{ mktemp /tmp/kakoune_psql.XXXX }
+#
+  #define-command -docstring "query-selection" \
+  #query-selection %{
+    #execute-keys -itersel -draft "<a-|>psql -A -d %opt{postgres_database} -U %opt{postgres_user} -h %opt{postgres_host} -p %opt{postgres_port} >> %opt{psql_tmpfile} 2>&1<ret>"
+  #}
+#
+  #define-command -docstring "query-buffer" \
+  #query-buffer %{
+    #execute-keys -draft "%%: query-selection<ret>"
+  #}
+#
+  ## tmux-terminal-horizontal kak -s "%val{session}-psql" -e "edit %opt{psql_tmpfile}; set-option window autoreload yes; nop %sh{ tmux select-pane -t .! }"
+  #repl-new kak -s "%val{session}-psql" -e "edit %opt{psql_tmpfile}; set-option window autoreload yes"
+#
+  #hook window WinClose .* %{ psql-disable }
+#}
+#define-command -docstring "psql-disable" \
+#psql-disable %{
+  #unset-option window postgres_database
+  #unset-option window postgres_user
+  #unset-option window postgres_host
+  #unset-option window postgres_port
+  #unset-option window psql_tmpfile
+  #nop %sh{
+    #kak -c "${kak_session}-psql" -e "kill!"
+    #rm -f "/tmp/$kak_opt_psql_tmpfile"
+    #echo "$kak_opt_psql_tmpfile" > /tmp/foo
+    #rm -f "/tmp/"
+  #}
+#}
+
+
+define-command paste-and-edit -params 2 %{
+		edit -scratch %arg{2}
+		exec '%"@pd'
+		set-option buffer filetype %arg{1}
 }
+
+define-command compare-master %{
+		set-register arobase %sh{ git show master:$(realpath --relative-base=$(git rev-parse --show-toplevel) $kak_buffile)}
+		set-register caret %opt{filetype}
+		new-horizontal paste-and-edit
+}
+
+define-command compare \
+-override \
+-docstring "Compare to another git branch" \
+-params 1 \
+-shell-script-candidates %{git branch} \
+		%{
+		set-register arobase %sh{ git show $1:$(realpath --relative-base=$(git rev-parse --show-toplevel) $kak_buffile)}
+		new-horizontal paste-and-edit %opt{filetype} %arg{1}
+}
+
+define-command eval-query \
+ -override \
+ -params 1 \
+ -shell-script-candidates %{
+		echo "\list" | psql "postgres://postgres:qwerty@localhost:6432?sslmode=disable" | tail -n +4 | head -n -8 | awk '{print $1}'
+ } \
+ %{
+  info %sh{
+		echo "${kak_selection}" | psql postgresql://postgres:qwerty@localhost:6432/$1 -e 2>&1
+  }
+ }
 

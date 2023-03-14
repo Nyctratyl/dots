@@ -108,6 +108,7 @@ fi
 path+=('/home/jacob/.local/bin')
 path+=('/home/jacob/go/bin')
 path+=('/usr/local/go/bin')
+path+=('/home/jacob/repos/scripts')
 path+=('/home/jacob/Applications/node-v16.13.1-linux-x64/bin/') # tmp solution
 alias garden="cd ~/repos/products/garden-v2/"
 alias mfn="cd ~/repos/products/mfn/"
@@ -116,5 +117,18 @@ alias k=kubectl
 
 # export _JAVA_AWT_WM_NONREPARENTING=1
 export PATH
-
+export KITTY_INSTALLATION_DIR=/home/jacob/.local/kitty.app
 source <(kubectl completion zsh)
+
+if test -n "$KITTY_INSTALLATION_DIR"; then
+    export KITTY_SHELL_INTEGRATION="no-cursor"
+    autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
+    kitty-integration
+    unfunction kitty-integration
+fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+[ -f "/home/jacob/.ghcup/env" ] && source "/home/jacob/.ghcup/env" # ghcup-env

@@ -209,36 +209,35 @@ bindsym $mod+r mode "resize"
 bindsym $mod+Shift+period move workspace to output left
 bindsym $mod+Shift+comma move window to output right
 bindsym $mod+comma focus output right
-bindsym $mod+p exec swaylock
+bindsym $mod+p exec swaylock -c 000000
 exec xmodmap -e "keycode 90 = Right" # Remap since Right key is dying
+bindsym $mod+u exec grim -g "$(slurp)" ~/Pictures/$(date +"%Y_%m_%dT%H:%M:%S").png
+bindsym $mod+o exec i3-input -F 'title_format "[%s] %title' -P 'New title for container: '
+bindsym $mod+t exec ~/repos/scripts/swayprop.sh
 
 # Tabbing
-bindsym Control+1 exec bash -c "~/scripts/nth_tab.sh 0"
-bindsym Control+2 exec bash -c "~/scripts/nth_tab.sh 1"
-bindsym Control+3 exec bash -c "~/scripts/nth_tab.sh 2"
-bindsym Control+4 exec bash -c "~/scripts/nth_tab.sh 3"
-bindsym Control+5 exec bash -c "~/scripts/nth_tab.sh 4"
-bindsym Control+6 exec bash -c "~/scripts/nth_tab.sh 5"
-bindsym Control+7 exec bash -c "~/scripts/nth_tab.sh 6"
-bindsym Control+8 exec bash -c "~/scripts/nth_tab.sh 7"
-bindsym Control+9 exec bash -c "~/scripts/nth_tab.sh 8"
+bindsym Control+1 exec bash -c "~/repos/scripts/nth_tab.sh 0"
+bindsym Control+2 exec bash -c "~/repos/scripts/nth_tab.sh 1"
+bindsym Control+3 exec bash -c "~/repos/scripts/nth_tab.sh 2"
+bindsym Control+4 exec bash -c "~/repos/scripts/nth_tab.sh 3"
+bindsym Control+5 exec bash -c "~/repos/scripts/nth_tab.sh 4"
+bindsym Control+6 exec bash -c "~/repos/scripts/nth_tab.sh 5"
+bindsym Control+7 exec bash -c "~/repos/scripts/nth_tab.sh 6"
+bindsym Control+8 exec bash -c "~/repos/scripts/nth_tab.sh 7"
+bindsym Control+9 exec bash -c "~/repos/scripts/nth_tab.sh 8"
 
 # Rebindings
 bindsym $mod+Shift+Return split v, exec $term --working-directory $(lastcwd)
 
 # Audio control
 bindsym XF86AudioPlay exec fish -c "~/scripts/playerctl_fast.sh play-pause" 
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pactl list sinks | tr '\n' ' ' | grep 'Sink #[0-9]\s*State\: RUNNING' -o | grep '[0-9]*' -o) +2% && exec curl "localhost:5999/forceUpdate?d=volume"
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pactl list sinks | tr '\n' ' ' | grep 'Sink #[0-9]\s*State\: RUNNING' -o | grep '[0-9]*' -o) -2% && exec curl "localhost:5999/forceUpdate?d=volume"
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pactl list sinks | tr '\n' ' ' | grep 'Sink #[0-9]*\s*State\: RUNNING' -o | grep '[0-9]*' -o) +2% && exec curl "localhost:5999/forceUpdate?d=volume"
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pactl list sinks | tr '\n' ' ' | grep 'Sink #[0-9]*\s*State\: RUNNING' -o | grep '[0-9]*' -o) -2% && exec curl "localhost:5999/forceUpdate?d=volume"
 bindsym XF86AudioMute exec amixer -D pulse set Master 1+ toggle && exec curl "localhost:5999/forceUpdate?d=volume"
 bindsym XF86MonBrightnessUp exec ~/repos/utility/blight/blight.py set +10% && exec curl "localhost:5999/forceUpdate?d=brightness" 
 bindsym XF86MonBrightnessDown exec ~/repos/utility/blight/blight.py set -10% && exec curl "localhost:5999/forceUpdate?d=brightness" 
 # Hotkeys to utilities
-bindsym $mod+n exec fish -c choose_wifi
-bindsym Print exec fish -c "gnome-screenshot -a"
-bindsym $mod+o exec i3-input -F 'title_format "[%s] %title' -P 'New title for container: '
 
-bindsym $mod+t exec ~/swayprop.sh
 
 gaps outer 0
 gaps inner 0
@@ -260,7 +259,7 @@ input type:keyboard {
     repeat_rate 100
 }
 
-include ./work
-# include ./home
+# include ./work
+include ./home
 
 
