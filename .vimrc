@@ -1,10 +1,6 @@
 set nocompatible
 filetype off
 set rtp +=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'ycm-core/YouCompleteMe'
-call vundle#end()
 
 syntax enable
 set number relativenumber
@@ -18,13 +14,15 @@ autocmd BufRead,BufNewFile ~/kod/blaslagets_strecklista_public/* setlocal tabsto
 autocmd BufRead,BufNewFile /var/www/html* setlocal tabstop=4 shiftwidth=4 noautoindent noexpandtab
 autocmd BufRead,BufNewFile ~/work/garden-v2 setlocal tabstop=4 shiftwidth=4 noautoindent noexpandtab
 autocmd BufRead,BufNewFile *.md set tw=80 fo+=a
-set foldmethod=indent
+set foldmethod=syntax
 set foldlevelstart=0
 let javaScript_fold=1 " Javascript
 "set viewoptions=cursor,folds,slash,unix
 " let g:skipview_files = ['*\.vim']
 set autoindent
 
+nnoremap g, <C-o>
+nnoremap g. <C-i>
 
 nnoremap <SPACE> <Nop>
 let mapleader=" "

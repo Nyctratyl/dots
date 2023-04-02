@@ -132,11 +132,13 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # # preview directory's content with exa when completing cd
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'tree -C $realpath | head -n 200'
+zstyle ':fzf-tab:complete:vim:*' fzf-preview 'bat $realpath --color=always'
 # # switch group using `,` and `.`
 zstyle ':fzf-tab:*' switch-group ',' '.'
 zstyle ':fzf-tab:*:' prefix ''
 export FZF_DEFAULT_COMMAND="find -L"
-
+#zstyle ":fzf-tab:*" fzf-flags --height=$(eval ~/scripts/fzf_height.sh)
+zstyle ":fzf-tab:*" fzf-flags --height=95%
 # Aliases
 alias thesis="cd ~/Documents/jobb/Provement/thesis"
 alias i3config="vim ~/.config/i3/config"
@@ -146,6 +148,11 @@ alias plugins.vim="vim ~/.vim/plugins.vim"
 alias zshrc="vim ~/.zshrc"
 alias torrents="cd ~/Downloads/torrents"
 alias dots="cd ~/Applications/dots"
+alias ls="exa"
+alias pela="~/scripts/pela.sh"
+function filmus() {
+  firefox "https://thepiratebay.org/search.php?q=$1&all=on&search=Pirate+Search&page=0&orderby="
+}
 
 path+=~/go/bin
 # Flow control off, or else, ctrl-s freezes in some cases
@@ -157,3 +164,10 @@ if [ -f '/home/gasha/work/google-cloud-sdk/path.zsh.inc' ]; then . '/home/gasha/
 if [ -f '/home/gasha/work/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/gasha/work/google-cloud-sdk/completion.zsh.inc'; fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+/usr/bin/setxkbmap -option "caps:swapescape"
+
+[ -f "/home/gasha/.ghcup/env" ] && source "/home/gasha/.ghcup/env" # ghcup-env
